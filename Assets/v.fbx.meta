@@ -3,7 +3,37 @@ guid: a8938cafa2d838b458bda1b6a6b0891f
 ModelImporter:
   serializedVersion: 19301
   internalIDToNameTable: []
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: E-Protein
+    second: {fileID: 2100000, guid: 2988ff3044b56cf419b40d5c1c1aab4d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Envelope
+    second: {fileID: 2100000, guid: 25777a6dabf827a48a499c8ff0c67c3d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Hemagglutinin-esterase dimer (HE)
+    second: {fileID: 2100000, guid: 25fef5264114190468a5e3a4ebb56988, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: M-Protein
+    second: {fileID: 2100000, guid: bdbbaf7809b70a7449550f577d08066a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: RNA and N protein
+    second: {fileID: 2100000, guid: b2db7aacf5a087c4e816d9f8ce6fbb1d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Spike Glycoprotein (S)
+    second: {fileID: 2100000, guid: 6d8b1d19df017e740900e81898b50477, type: 2}
   materials:
     materialImportMode: 1
     materialName: 0

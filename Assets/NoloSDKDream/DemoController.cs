@@ -40,11 +40,11 @@ public class DemoController : MonoBehaviour
                 Vector2 delta = NoloBridge.devices[deviceID].touchAxis - lastTouch;
                 if (ObjectControl.instance.isSplit && lastPickedObject != null)
                 {
-                    lastPickedObject.transform.Rotate(new Vector3(0f, delta.x * 30f, 0f));
+                    lastPickedObject.transform.RotateAround(lastPickedObject.transform.position, Vector3.up, -delta.x * 30f);
                 }
                 else
                 {
-                    root.transform.Rotate(new Vector3(0f, delta.x * 30f, 0f));
+                    root.transform.RotateAround(root.transform.position, Vector3.up, -delta.x * 30f);
                 }
             }
 

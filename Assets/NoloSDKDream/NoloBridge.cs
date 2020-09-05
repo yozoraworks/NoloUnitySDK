@@ -25,7 +25,7 @@ public class NoloBridge : MonoBehaviour
     }
 
     public static deviceInfo[] devices = new deviceInfo[4];
-
+    
     void InitNolo()
     {
         if (noloClass == null)
@@ -137,7 +137,7 @@ public class NoloBridge : MonoBehaviour
         while (true)
         {
             GetDevicesData();
-            yield return new WaitForSecondsRealtime(0.01f);
+            yield return new WaitForSecondsRealtime(0.015f);
         }
     }
 }
