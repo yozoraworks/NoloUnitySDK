@@ -8,6 +8,8 @@ using System.Threading;
 public class NoloBridge : MonoBehaviour
 {
     AndroidJavaObject noloClass = null;
+
+    public float eyeDistance = 0.025f;
     
     public class deviceInfo
     {
@@ -130,6 +132,24 @@ public class NoloBridge : MonoBehaviour
         InitNolo();
 
         StartCoroutine(GetDeviceLoop());
+    }
+
+    void Update()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        {
+            eyeDistance -= 0.005f;
+            eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
+            transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
+            transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
+        }
+        if (Input.GetKeyDown(KeyCode.RightArrow))
+        {
+            eyeDistance += 0.005f;
+            eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
+            transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
+            transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
+        }
     }
 
     IEnumerator GetDeviceLoop()

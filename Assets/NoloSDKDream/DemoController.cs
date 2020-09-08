@@ -70,7 +70,7 @@ public class DemoController : MonoBehaviour
 
         lastTouchpadPress = NoloBridge.devices[deviceID].touchpadPressed;
 
-        if (NoloBridge.devices[deviceID].system)
+        if (NoloBridge.devices[deviceID].menu)
         {
             //restart
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
