@@ -6,6 +6,10 @@ public class NoloDeviceTransform : MonoBehaviour
 {
     public int deviceID = 0;
 
+    public GameObject L, R;
+
+    public bool pos = true, rot = true;
+
     // Update is called once per frame
     void Update()
     {
@@ -16,8 +20,15 @@ public class NoloDeviceTransform : MonoBehaviour
         }
         else
         {
-            transform.position = NoloBridge.devices[deviceID].position;
-            transform.rotation = NoloBridge.devices[deviceID].rotation;
+            if (deviceID == 1 || deviceID == 2)
+            {
+                GetComponentInChildren<UnityEngine.UI.Text>().text = "Y: " + NoloBridge.devices[deviceID].position.y.ToString("F3") + " 瞳距" + Mathf.Abs(L.transform.localPosition.x - R.transform.localPosition.x).ToString("F4");
+            }
+
+            if (pos)
+                transform.localPosition = NoloBridge.devices[deviceID].position;
+            if (rot)
+                transform.localRotation = NoloBridge.devices[deviceID].rotation;
         }
     }
 }

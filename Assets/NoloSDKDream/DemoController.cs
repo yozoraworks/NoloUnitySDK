@@ -10,12 +10,14 @@ public class DemoController : MonoBehaviour
 
     public GameObject root;
 
-    Transform originalParent = null;
-
     public int deviceID = 1;
 
     Vector2 lastTouch = Vector2.zero;
     bool lastTouchpadPress = false;
+
+    public DemoController theOtherController;
+
+    public float lastControllerDistance = 0f;
 
     // Update is called once per frame
     void Update()
@@ -23,14 +25,32 @@ public class DemoController : MonoBehaviour
         if (NoloBridge.devices[deviceID].trigger && attached == null)
         {
             attached = collided;
-            originalParent = attached.transform.parent;
             attached.transform.parent = transform;
             lastPickedObject = attached;
+            lastControllerDistance = 0f;
+        }
+        else if (NoloBridge.devices[deviceID].trigger && attached != null && theOtherController.attached == attached && !ObjectControl.instance.isSplit && deviceID == 2)
+        {
+            float distance = Vector3.Distance(transform.position, theOtherController.transform.position);
+
+            if (lastControllerDistance > 0f)
+            {
+                float ratio = distance / lastControllerDistance;
+                ratio = (ratio - 1f) * 0.75f + 1f;
+                root.transform.localScale *= ratio;
+            }
+
+            lastControllerDistance = distance;
         }
         else if (!NoloBridge.devices[deviceID].trigger && attached != null)
         {
-            attached.transform.parent = originalParent;
+            lastControllerDistance = 0f;
+            attached.transform.parent = attached.GetComponent<ObjectData>().myParent;
             attached = null;
+        }
+        else
+        {
+            lastControllerDistance = 0f;
         }
 
         if (NoloBridge.devices[deviceID].touched)
@@ -58,7 +78,7 @@ public class DemoController : MonoBehaviour
         {
             if (attached != null)
             {
-                attached.transform.parent = originalParent;
+                attached.transform.parent = attached.GetComponent<ObjectData>().myParent;
                 attached = null;
             }
 
@@ -71,6 +91,11 @@ public class DemoController : MonoBehaviour
         lastTouchpadPress = NoloBridge.devices[deviceID].touchpadPressed;
 
         if (NoloBridge.devices[deviceID].menu)
+        {
+            root.transform.position = transform.position;
+        }
+
+        if (NoloBridge.devices[deviceID].system)
         {
             //restart
             UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);

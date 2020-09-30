@@ -9,7 +9,8 @@ public class NoloBridge : MonoBehaviour
 {
     AndroidJavaObject noloClass = null;
 
-    public float eyeDistance = 0.025f;
+    public float eyeDistance = 0.0315f;
+    public float step = 0.0005f;
     
     public class deviceInfo
     {
@@ -138,14 +139,14 @@ public class NoloBridge : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow))
         {
-            eyeDistance -= 0.005f;
+            eyeDistance -= step;
             eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
             transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
             transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
         }
         if (Input.GetKeyDown(KeyCode.RightArrow))
         {
-            eyeDistance += 0.005f;
+            eyeDistance += step;
             eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
             transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
             transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
