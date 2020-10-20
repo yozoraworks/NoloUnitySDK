@@ -458,8 +458,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deviceID: 0
-  L: {fileID: 0}
-  R: {fileID: 0}
   pos: 1
   rot: 1
 --- !u!1 &545980161
@@ -661,8 +659,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   deviceID: 3
-  L: {fileID: 0}
-  R: {fileID: 0}
   pos: 1
   rot: 1
 --- !u!1 &725416729

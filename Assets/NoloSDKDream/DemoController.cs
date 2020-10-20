@@ -19,17 +19,35 @@ public class DemoController : MonoBehaviour
 
     public float lastControllerDistance = 0f;
 
+    bool gripPressed = false;
+    float systemButtonTimer = 0f;
     // Update is called once per frame
     void Update()
     {
+        if (NoloBridge.devices[deviceID].grip && !gripPressed)
+        {
+            lastControllerDistance = 0f;
+            if (attached && attached.GetComponent<ObjectData>() != null)
+            {
+                attached.transform.parent = attached.GetComponent<ObjectData>().myParent;
+                attached = null;
+            }
+            ObjectManager.instance.Next();
+        }
+        gripPressed = NoloBridge.devices[deviceID].grip;
+
         if (NoloBridge.devices[deviceID].trigger && attached == null)
         {
-            attached = collided;
-            attached.transform.parent = transform;
-            lastPickedObject = attached;
-            lastControllerDistance = 0f;
+            if (collided != null)
+            {
+                attached = collided;
+                collided = null;
+                attached.transform.parent = transform;
+                lastPickedObject = attached;
+                lastControllerDistance = 0f;
+            }
         }
-        else if (NoloBridge.devices[deviceID].trigger && attached != null && theOtherController.attached == attached && !ObjectControl.instance.isSplit && deviceID == 2)
+        else if (NoloBridge.devices[deviceID].trigger && attached != null && theOtherController.attached == attached && (!ObjectControl.instance.isSplit || !ObjectControl.instance.gameObject.activeSelf) && deviceID == 2)
         {
             float distance = Vector3.Distance(transform.position, theOtherController.transform.position);
 
@@ -45,8 +63,11 @@ public class DemoController : MonoBehaviour
         else if (!NoloBridge.devices[deviceID].trigger && attached != null)
         {
             lastControllerDistance = 0f;
-            attached.transform.parent = attached.GetComponent<ObjectData>().myParent;
-            attached = null;
+            if (attached && attached.GetComponent<ObjectData>() != null)
+            {
+                attached.transform.parent = attached.GetComponent<ObjectData>().myParent;
+                attached = null;
+            }
         }
         else
         {
@@ -58,7 +79,7 @@ public class DemoController : MonoBehaviour
             if (lastTouch != Vector2.zero)
             {
                 Vector2 delta = NoloBridge.devices[deviceID].touchAxis - lastTouch;
-                if (ObjectControl.instance.isSplit && lastPickedObject != null)
+                if (ObjectControl.instance.isSplit && lastPickedObject != null && ObjectControl.instance.gameObject.activeSelf)
                 {
                     lastPickedObject.transform.RotateAround(lastPickedObject.transform.position, Vector3.up, -delta.x * 30f);
                 }
@@ -85,7 +106,10 @@ public class DemoController : MonoBehaviour
             lastPickedObject = null;
 
             //animation
-            ObjectControl.instance.DoAnimation();
+            if (ObjectControl.instance.gameObject.activeSelf)
+            {
+                ObjectControl.instance.DoAnimation();
+            }
         }
 
         lastTouchpadPress = NoloBridge.devices[deviceID].touchpadPressed;
@@ -97,9 +121,17 @@ public class DemoController : MonoBehaviour
 
         if (NoloBridge.devices[deviceID].system)
         {
-            //restart
-            UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            systemButtonTimer += Time.deltaTime;
+            if (systemButtonTimer > 0.5f)
+            {
+                systemButtonTimer = 0f;
+                //restart
+                UnityEngine.SceneManagement.SceneManager.LoadScene(UnityEngine.SceneManagement.SceneManager.GetActiveScene().name);
+            
+            }
         }
+        else
+            systemButtonTimer = 0f;
     }
 
     private void OnTriggerEnter(Collider other)

@@ -15,7 +15,7 @@ public class ObjectControl : MonoBehaviour
     Quaternion[] rots;
     
     bool animating = false;
-
+    
     void Awake()
     {
         instance = this;
@@ -41,9 +41,20 @@ public class ObjectControl : MonoBehaviour
         {
             c.enabled = isSplit;
         }
-        GetComponent<Collider>().enabled = !isSplit;
+        transform.parent.GetComponent<Collider>().enabled = !isSplit;
 
         StartCoroutine(anim());
+    }
+
+    private void OnEnable()
+    {
+        transform.parent.GetComponent<Collider>().enabled = !isSplit;
+    }
+
+    private void OnDisable()
+    {
+        animating = false;
+        transform.parent.GetComponent<Collider>().enabled = true;
     }
 
     IEnumerator anim()
