@@ -6,6 +6,6 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/NoloSDKDream/DemoNoLens.unity
-    guid: f2a7b290b1669c147abd2ea297d3d7d5
+    path: Assets/NoloSDKDream/DemoNoLensNolo.unity
+    guid: 7097cc1ec0b50ba45ad578824da05bbd
   m_configObjects: {}
