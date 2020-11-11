@@ -59,39 +59,50 @@ public class NoloBridge : MonoBehaviour
         try
         {
             string r = noloClass.Call<string>("GetDevicesData");
-
-            JObject json = JObject.Parse(r);
-
-            if (json["success"].ToString() != "true")
+            Debug.Log("decode " + Time.time);
+            Thread th = new Thread(() =>
             {
-                Debug.Log(json["error"].ToString());
-            }
+                try
+                {
+                    JObject json = JObject.Parse(r);
 
-            for (int deviceID = 0; deviceID < 4; deviceID++)
-            {
-                JObject deviceJson = (JObject)json["D" + deviceID];
-                int status = int.Parse(deviceJson["status"].ToString());
+                    if (json["success"].ToString() != "true")
+                    {
+                        Debug.Log(json["error"].ToString());
+                    }
 
-                Vector3 pos = new Vector3(float.Parse(deviceJson["x"].ToString()), float.Parse(deviceJson["y"].ToString()), float.Parse(deviceJson["z"].ToString()));
-                Quaternion rot = new Quaternion(float.Parse(deviceJson["rx"].ToString()), float.Parse(deviceJson["ry"].ToString()), float.Parse(deviceJson["rz"].ToString()), float.Parse(deviceJson["rw"].ToString()));
+                    for (int deviceID = 0; deviceID < 4; deviceID++)
+                    {
+                        JObject deviceJson = (JObject)json["D" + deviceID];
+                        int status = int.Parse(deviceJson["status"].ToString());
 
-                devices[deviceID].deviceID = deviceID;
-                devices[deviceID].position = pos;
-                devices[deviceID].rotation = rot;
+                        Vector3 pos = new Vector3(float.Parse(deviceJson["x"].ToString()), float.Parse(deviceJson["y"].ToString()), float.Parse(deviceJson["z"].ToString()));
+                        Quaternion rot = new Quaternion(float.Parse(deviceJson["rx"].ToString()), float.Parse(deviceJson["ry"].ToString()), float.Parse(deviceJson["rz"].ToString()), float.Parse(deviceJson["rw"].ToString()));
 
-                int button = int.Parse(deviceJson["button"].ToString());
-                devices[deviceID].button = button;
+                        devices[deviceID].deviceID = deviceID;
+                        devices[deviceID].position = pos;
+                        devices[deviceID].rotation = rot;
 
-                devices[deviceID].trigger = (button >> 1 & 0x1) == 1;
-                devices[deviceID].touched = (button >> 5 & 0x1) == 1;
-                devices[deviceID].touchpadPressed = (button >> 0 & 0x1) == 1;
-                devices[deviceID].grip = (button >> 4 & 0x1) == 1;
-                devices[deviceID].menu = (button >> 2 & 0x1) == 1;
-                devices[deviceID].system = (button >> 3 & 0x1) == 1;
+                        int button = int.Parse(deviceJson["button"].ToString());
+                        devices[deviceID].button = button;
 
-                devices[deviceID].touch = int.Parse(deviceJson["touch"].ToString()); ;
-                devices[deviceID].touchAxis = new Vector2(float.Parse(deviceJson["touchx"].ToString()), float.Parse(deviceJson["touchy"].ToString()));
-            }
+                        devices[deviceID].trigger = (button >> 1 & 0x1) == 1;
+                        devices[deviceID].touched = (button >> 5 & 0x1) == 1;
+                        devices[deviceID].touchpadPressed = (button >> 0 & 0x1) == 1;
+                        devices[deviceID].grip = (button >> 4 & 0x1) == 1;
+                        devices[deviceID].menu = (button >> 2 & 0x1) == 1;
+                        devices[deviceID].system = (button >> 3 & 0x1) == 1;
+
+                        devices[deviceID].touch = int.Parse(deviceJson["touch"].ToString()); ;
+                        devices[deviceID].touchAxis = new Vector2(float.Parse(deviceJson["touchx"].ToString()), float.Parse(deviceJson["touchy"].ToString()));
+                    }
+                }
+                catch (Exception e)
+                {
+                    Debug.Log(e.Message + "\n" + e.StackTrace);
+                }
+            });
+            th.Start();
         }
         catch (Exception e)
         {
@@ -132,24 +143,50 @@ public class NoloBridge : MonoBehaviour
     {
         InitNolo();
 
-        StartCoroutine(GetDeviceLoop());
+        //StartCoroutine(GetDeviceLoop());
     }
 
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.LeftArrow))
+        try
         {
-            eyeDistance -= step;
-            eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
-            transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
-            transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
+            string r = noloClass.Call<string>("GetDevicesData");
+            JObject json = JObject.Parse(r);
+
+            if (json["success"].ToString() != "true")
+            {
+                Debug.Log(json["error"].ToString());
+            }
+
+            for (int deviceID = 0; deviceID < 4; deviceID++)
+            {
+                JObject deviceJson = (JObject)json["D" + deviceID];
+                int status = int.Parse(deviceJson["status"].ToString());
+
+                Vector3 pos = new Vector3(float.Parse(deviceJson["x"].ToString()), float.Parse(deviceJson["y"].ToString()), float.Parse(deviceJson["z"].ToString()));
+                Quaternion rot = new Quaternion(float.Parse(deviceJson["rx"].ToString()), float.Parse(deviceJson["ry"].ToString()), float.Parse(deviceJson["rz"].ToString()), float.Parse(deviceJson["rw"].ToString()));
+
+                devices[deviceID].deviceID = deviceID;
+                devices[deviceID].position = pos;
+                devices[deviceID].rotation = rot;
+
+                int button = int.Parse(deviceJson["button"].ToString());
+                devices[deviceID].button = button;
+
+                devices[deviceID].trigger = (button >> 1 & 0x1) == 1;
+                devices[deviceID].touched = (button >> 5 & 0x1) == 1;
+                devices[deviceID].touchpadPressed = (button >> 0 & 0x1) == 1;
+                devices[deviceID].grip = (button >> 4 & 0x1) == 1;
+                devices[deviceID].menu = (button >> 2 & 0x1) == 1;
+                devices[deviceID].system = (button >> 3 & 0x1) == 1;
+
+                devices[deviceID].touch = int.Parse(deviceJson["touch"].ToString()); ;
+                devices[deviceID].touchAxis = new Vector2(float.Parse(deviceJson["touchx"].ToString()), float.Parse(deviceJson["touchy"].ToString()));
+            }
         }
-        if (Input.GetKeyDown(KeyCode.RightArrow))
+        catch (Exception e)
         {
-            eyeDistance += step;
-            eyeDistance = Mathf.Clamp(eyeDistance, 0.01f, 0.05f);
-            transform.GetChild(0).localPosition = new Vector3(-eyeDistance, transform.GetChild(0).localPosition.y, transform.GetChild(0).localPosition.z);
-            transform.GetChild(1).localPosition = new Vector3(eyeDistance, transform.GetChild(1).localPosition.y, transform.GetChild(1).localPosition.z);
+            Debug.Log(e.Message + "\n" + e.StackTrace);
         }
     }
 
@@ -158,7 +195,7 @@ public class NoloBridge : MonoBehaviour
         while (true)
         {
             GetDevicesData();
-            yield return new WaitForSecondsRealtime(0.015f);
+            yield return new WaitForSecondsRealtime(0.008f);
         }
     }
 }
