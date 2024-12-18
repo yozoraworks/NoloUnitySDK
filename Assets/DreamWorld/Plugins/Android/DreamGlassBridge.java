@@ -1,165 +1,127 @@
 package com.unity3d.player;
 
+import android.app.PendingIntent;
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+import android.content.Intent;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.dreamworld.dreamglasssdk.DreamGlassSDK;
-import com.dreamworld.dreamglasssdk.sdk.DGData;
-import com.dreamworld.dreamglasssdk.sdk.IResult;
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
+import com.dreamworld.trlibrary.CallbackInterface;
+import com.dreamworld.trlibrary.TRUsbHidUtil;
 
-public class DreamGlassBridge {
+import android.hardware.usb.UsbDevice;
+import android.hardware.usb.UsbDeviceConnection;
+import android.hardware.usb.UsbManager;
+
+public class DreamGlassBridge implements CallbackInterface {
+    private static final String ACTION_USB_PERMISSION = "com.unity3d.player.USB_PERMISSION";
+
+    private static final int PRODUCT_VID = 0x483;
+    private static final int PRODUCT_PID= 0x5740;
+
+    private static final int XREAL_PRODUCT_VID = 0x3318;
+    private static final int XREAL_PRODUCT_PID = 0x0432;
 
     static Context c;
-    static String sn = "";
 
     static DreamGlassBridge instance = null;
 
-    static int installAppStatus = 0;
-
-    static boolean convertingPNG = false;
-    static boolean inForeground = false;
-
-    public void OnClose() {
-        DreamGlassSDK.getInstance().destory();
-    }
 
     public static DreamGlassBridge GetInstance() {
         return instance;
     }
 
-    public void InitDream(Context ctx) {
-        c = ctx;
-        DreamGlassSDK.getInstance().init(c);
+    public static TRUsbHidUtil utils = new TRUsbHidUtil();
 
+    public String IMUData = "";
+
+    public boolean Init(Context ctx) {
+        c = ctx;
         instance = this;
 
-        DreamGlassSDK.getInstance().getSN(c, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-                sn = dgData.getData();
-            }
-        });
+        int ret = checkDevice();
+        if (ret < 0) {
+            Log.i("Unity", "No device found");
+            return false;
+        }
+
+        utils.initLibUsb(PRODUCT_VID, PRODUCT_VID, ret);
+        utils.registerHmdCallbackData(this);
+
+        return true;
+    }
+
+    public void Close() {
+        utils.unRegisterHmdCallbackData(this);
     }
 
     public void Set3DMode(int mode) {
-        DreamGlassSDK.getInstance().set3DScreenMode(c, mode, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-            }
-        });
+        utils.set2D3DState(mode);
     }
 
-    public void SetHomeEnabled(boolean enabled) {
-        DreamGlassSDK.getInstance().setHomeKeyDisable(c, !enabled, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-            }
-        });
+    public int Get3DMode() {
+        return utils.get2D3DState();
     }
 
-    public void SetDistortionEnabled(boolean enabled) {
-        DreamGlassSDK.getInstance().setDisableDistortion(c, !enabled, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-            }
-        });
-    }
-
-    public void Shutdown(boolean reboot) {
-        DreamGlassSDK.getInstance().shutdown(c, reboot, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-            }
-        });
-    }
-
-    public void InstallApp(String apkPath) {
-        installAppStatus = 0;
-        DreamGlassSDK.getInstance().installApp(c, apkPath, new IResult() {
-            @Override
-            public void onResult(boolean b, DGData dgData) {
-                if(b){
-                    installAppStatus = 1;
-                }else{
-                    installAppStatus = 2;
-                }
-            }
-        });
-    }
-
-    public int GetInstallAppStatus() {
-        return installAppStatus;
-    }
-
-    public void SetInForeground(boolean foreground) {
-        inForeground = foreground;
-    }
-
-    public void CaptureScreen() {
-        if (!convertingPNG && !inForeground) {
-            convertingPNG = true;
-            DreamGlassSDK.getInstance().captureScreen(c, new IResult() {
-                @Override
-                public void onResult(boolean b, DGData dgData) {
-                    if (b) {
-                        String screenshotPath = dgData.getData();
-                        ConvertThread th = new ConvertThread(screenshotPath);
-                        th.start();
-                    } else {
-                        convertingPNG = false;
-                        Log.v("Unity", "Cannot take screenshot");
-                    }
-                }
-            });
-        }
+    public String GetIMU() {
+        return IMUData;
     }
 
     public String GetSN() {
-        return sn;
+        return utils.getSN();
     }
 
-    public int Add(int a, int b) {
-        return a + b;
+    @Override
+    public void onCmdEvent(@Nullable String s, int i) {
+        Log.i("Unity", "Cmd " + s + " " + i);
     }
 
-    public class ConvertThread extends Thread {
-        private String path;
-        public ConvertThread(String p){
-            path = p;
-        }
+    @Override
+    public void onSensorChanged(@NonNull String s, int i) {
+        Log.i("Unity", "Sensor " + s + " " + i);
+    }
 
-        @Override
-        public void run(){
-            try {
-                Bitmap screen = BitmapFactory.decodeFile(path);
-                Bitmap resized = Bitmap.createScaledBitmap(screen, 320, 180, true);
+    UsbManager mUsbManager = null;
+    private int checkDevice() {
+        mUsbManager = (UsbManager)c.getSystemService(Context.USB_SERVICE);
 
-                ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-                resized.compress(Bitmap.CompressFormat.JPEG, 75, bytes);
+        var retval = -1;
+        for (UsbDevice device : mUsbManager.getDeviceList().values()) {
+            if (device.getVendorId() == PRODUCT_VID && device.getProductId() == PRODUCT_PID) {
+                //check permission
+                if (!mUsbManager.hasPermission(device)) {
+                    //ask for permission
+                    var mPermissionIntent = PendingIntent.getBroadcast(c, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
+                    mUsbManager.requestPermission(device, mPermissionIntent);
+                    retval = -3;
 
-                File f = new File("/storage/emulated/0/screen.jpg");
-                f.createNewFile();
-                FileOutputStream fo = new FileOutputStream(f);
-                fo.write(bytes.toByteArray());
-                fo.close();
+                    break;
+                }
 
-                screen.recycle();
-                resized.recycle();
+                Log.i("Unity", "DEVICE: " + device.getManufacturerName() + " " + device.getProductName()  + " " + device.getDeviceName() + " " + device.getSerialNumber());
 
-                File pngfile = new File(path);
-                pngfile.delete();
-            } catch (Exception e) {
-                e.printStackTrace();
+                //open device
+                UsbDeviceConnection connection = mUsbManager.openDevice(device);
+                if (connection != null) {
+                    var mPermissionIntent = PendingIntent.getBroadcast(c, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
+                    mUsbManager.requestPermission(device, mPermissionIntent);
+
+                    retval = -2;
+                } else {
+                    try {
+                        retval = connection.getFileDescriptor();
+                    } catch (Exception e) {
+                        retval = -1;
+                    }
+                }
+
+                break;
             }
 
-            convertingPNG = false;
         }
+
+        return retval;
     }
 }

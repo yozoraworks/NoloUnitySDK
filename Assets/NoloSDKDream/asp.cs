@@ -4,15 +4,18 @@ using UnityEngine;
 
 public class asp : MonoBehaviour
 {
+    public bool UpDown = true;
+
     // Start is called before the first frame update
     void Start()
     {
-        GetComponent<Camera>().aspect /= 2f;
+        if (UpDown)
+            GetComponent<Camera>().aspect /= 2f;
+        else GetComponent<Camera>().aspect *= 2f;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
     }
 }
