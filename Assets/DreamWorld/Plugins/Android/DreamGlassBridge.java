@@ -80,6 +80,10 @@ public class DreamGlassBridge implements CallbackInterface {
 
     @Override
     public void onSensorChanged(@NonNull String s, int i) {
+        if (i == 0) {
+            IMUData = s;
+        }
+        
         Log.i("Unity", "Sensor " + s + " " + i);
     }
 
