@@ -79,8 +79,8 @@ public class ObjectManager : MonoBehaviour
         {
             //rotate by screen axis
             var rotation = Input.GetTouch(0).deltaPosition * 0.3f;
-            transform.RotateAround(transform.position, Vector3.right, rotation.x);
-            transform.RotateAround(transform.position, Vector3.up, -rotation.y);
+            transform.RotateAround(transform.position, Vector3.right, rotation.y);
+            transform.RotateAround(transform.position, Vector3.up, -rotation.x);
 
             rotated = true;
         }
