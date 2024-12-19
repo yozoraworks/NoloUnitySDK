@@ -51,7 +51,7 @@ public class ObjectManager : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.Return) && enterTime < 0.5f)
         {
-            ObjectControl.instance.DoAnimation();
+            Next();
         }
 
         if (Input.GetKey(KeyCode.Return))
@@ -59,11 +59,12 @@ public class ObjectManager : MonoBehaviour
             enterTime += Time.unscaledDeltaTime;
             if (enterTime > 0.5f)
             {
-                Head.ResetCamera();
-                transform.position = new Vector3(0f, -0.12f, -0.4f);
+                //Head.ResetCamera();
+                //transform.position = new Vector3(0f, -0.12f, -0.4f);
                 enterTime = 0f;
-
-                Next();
+                DreamManager.angle = Vector3.zero;
+                
+                //Next();
             }
         }
         else

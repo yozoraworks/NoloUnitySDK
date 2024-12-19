@@ -10,7 +10,7 @@ public class DreamManager : MonoBehaviour
     private static AndroidJavaObject TheDreamBridge = null;
     private AndroidJavaObject unityContext = null;
 
-    Vector3 angle = Vector3.zero;
+    public static Vector3 angle = Vector3.zero;
 
     private void Update()
     {
