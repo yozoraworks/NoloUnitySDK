@@ -63,6 +63,11 @@ public class ObjectManager : MonoBehaviour
         }
         else
             enterTime = 0f;
+        
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)
+        {
+            Next();
+        }
     }
 
     public void Next()
