@@ -19,7 +19,7 @@ public class DreamManager : MonoBehaviour
         {
             angle += gyro;
             Debug.Log("Angle: " + angle);
-            transform.rotation = Quaternion.Euler(angle);
+            transform.rotation = Quaternion.Euler(new Vector3(-angle.x, -angle.z, -angle.y));
         }
     }
 
