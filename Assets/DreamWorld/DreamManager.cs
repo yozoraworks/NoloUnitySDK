@@ -12,7 +12,7 @@ public class DreamManager : MonoBehaviour
 
     public static Vector3 angle = Vector3.zero;
 
-    private void Update()
+    private void FixedUpdate()
     {
         Vector3 acc, gyro;
         if (GetIMU(out acc, out gyro))
