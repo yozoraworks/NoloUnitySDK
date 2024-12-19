@@ -54,18 +54,10 @@ public class DreamManager : MonoBehaviour
         try
         {
             string data = TheDreamBridge.Call<string>("GetIMU");
-            if (string.IsNullOrEmpty(data))
-            {
-                return false;
-            }
+            string[] splits = data.Split(new[] { ' ' });
 
-            var json = new JSONObject(data);
-            var imu_data = json.GetField("imu_data")[0];
-
-            acc = new Vector3(imu_data.GetField("acc_x").floatValue, imu_data.GetField("acc_y").floatValue,
-                imu_data.GetField("acc_z").floatValue);
-            gyro = new Vector3(imu_data.GetField("gyro_x").floatValue, imu_data.GetField("gyro_y").floatValue,
-                imu_data.GetField("gyro_z").floatValue);
+            gyro = new Vector3(float.Parse(splits[0]), float.Parse(splits[1]), float.Parse(splits[2]));
+            acc = new Vector3(float.Parse(splits[3]), float.Parse(splits[4]), float.Parse(splits[5]));
 
             return true;
         }

@@ -14,6 +14,7 @@ import com.dreamworld.trlibrary.TRUsbHidUtil;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+import org.json.JSONObject;
 
 public class DreamGlassBridge implements CallbackInterface {
     private static final String ACTION_USB_PERMISSION = "com.dream.dgdemo.USB_PERMISSION";
@@ -35,7 +36,8 @@ public class DreamGlassBridge implements CallbackInterface {
 
     public static TRUsbHidUtil utils = new TRUsbHidUtil();
 
-    public String IMUData = "";
+    public float rx, ry, rz;
+    public float ax, ay, az;
 
     private IntentFilter usbAttachIntentFilter = new IntentFilter();
 
@@ -79,7 +81,10 @@ public class DreamGlassBridge implements CallbackInterface {
     }
 
     public String GetIMU() {
-        return IMUData;
+        var s = String.format("%f %f %f %f %f %f", rx, ry, rz, ax, ay, az);
+        rx = ry = rz = 0;
+        ax = ay = az = 0;
+        return s;
     }
 
     public String GetSN() {
@@ -94,7 +99,15 @@ public class DreamGlassBridge implements CallbackInterface {
     @Override
     public void onSensorChanged(String s, int i) {
         if (i == 0) {
-            IMUData = s;
+         var data = new JSONObject(s);
+         data = (JSONObject)data.get("imu_data")[0];
+            rx += data.getFloat("gyro_x");
+            ry += data.getFloat("gyro_y");
+            rz += data.getFloat("gyro_z");
+           
+            ax += data.getFloat("acc_x");
+            ay += data.getFloat("acc_y");
+            az += data.getFloat("acc_z");
         }
     }
 
