@@ -5,35 +5,41 @@ EditorUserSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 4
   m_ConfigSettings:
+    GraphicsSettingsInspector_UserSettings:
+      value: 18134705175a055722080a3115371d4a0d55006876786860616b0471b8b07a68ffab74f9ee2a3a30300cea1a11320d0beb1a0c25f7060f494b4cdf1b18f3045e38cb5ad8
+      flags: 0
     RecentlyUsedSceneGuid-0:
-      value: 0603515204500d030b0a5c7011750c44124e4129787c7e3274791f30e3b56561
-      flags: 0
-    RecentlyUsedSceneGuid-1:
-      value: 50040c0000010c0e0e0c582716225a44474e4d7e752a2264282d1867b7b9633b
-      flags: 0
-    RecentlyUsedSceneGuid-2:
-      value: 050355510707500b0f5f5a7449200e4441161a2e7e2d2762747e1960e6b7306d
-      flags: 0
-    RecentlyUsedSceneGuid-3:
       value: 5a5757560101590a5d0c0e24427b5d44434e4c7a7b7a23677f2b4565b7b5353a
       flags: 0
-    RecentlyUsedSceneGuid-4:
+    RecentlyUsedSceneGuid-1:
       value: 5550070251005f5a5b5b0d7a44765a44444e4d2f787f77677e714530b3b1613b
       flags: 0
-    RecentlyUsedSceneGuid-5:
+    RecentlyUsedSceneGuid-2:
       value: 02050304030c5a030b0d5e7544750744464f1c2c287925312c794f37e4e46061
       flags: 0
-    RecentlyUsedSceneGuid-6:
+    RecentlyUsedSceneGuid-3:
       value: 0206045455065d080e565d7a4675594410154c287a2c7765792c4b65b3e4603b
       flags: 0
-    RecentlyUsedSceneGuid-7:
+    RecentlyUsedSceneGuid-4:
       value: 0104010452005d5d580a0d2316735d4440161a792a7925337d284c37e1b96369
       flags: 0
-    RecentlyUsedSceneGuid-8:
+    RecentlyUsedSceneGuid-5:
       value: 5a50005307030d5a5c5e5b7149725b44414e4f7c7b7e76362e7e4460b0b6326c
       flags: 0
-    RecentlyUsedSceneGuid-9:
+    RecentlyUsedSceneGuid-6:
       value: 5a54025057015108555f5b2743770b4317164e7c2f2e27697e7f1c61bab36d3d
+      flags: 0
+    RecentlyUsedSceneGuid-7:
+      value: 5054555600025d5f095f582044700c4415164e7c7a7d27667c2d4536b2e3363d
+      flags: 0
+    RecentlyUsedSceneGuid-8:
+      value: 5554555e5d04505e0e57597646710644144e1e782a2a73617b2d4b60b0b73639
+      flags: 0
+    RecentlyUsedSceneGuid-9:
+      value: 01520407060d590f5a57587a46750c444f4f497e742d7f647b2a4e37b5b06d6d
+      flags: 0
+    lightmappingBakingProfile:
+      value: 51
       flags: 0
     vcSharedLogLevel:
       value: 0d5e400f0650

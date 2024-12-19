@@ -95,6 +95,7 @@ public class DreamGlassBridge implements CallbackInterface {
     public void onSensorChanged(String s, int i) {
         if (i == 0) {
             IMUData = s;
+            Log.i("Unity", "IMU " + s);
         }
     }
 
