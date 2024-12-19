@@ -67,7 +67,6 @@ public class DreamManager : MonoBehaviour
             gyro = new Vector3(imu_data.GetField("gyro_x").floatValue, imu_data.GetField("gyro_y").floatValue,
                 imu_data.GetField("gyro_z").floatValue);
 
-            Debug.Log("IMU: " + acc + " " + gyro);
             return true;
         }
         catch (Exception e)
