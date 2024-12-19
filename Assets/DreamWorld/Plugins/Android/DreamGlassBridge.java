@@ -100,7 +100,8 @@ public class DreamGlassBridge implements CallbackInterface {
     public void onSensorChanged(String s, int i) {
         if (i == 0) {
          var data = new JSONObject(s);
-         data = (JSONObject)data.get("imu_data")[0];
+         data = (JSONObject)data.getJSONArray("imu_data");
+         data = (JSONObject)data.getJSONObject(0);
             rx += data.getFloat("gyro_x");
             ry += data.getFloat("gyro_y");
             rz += data.getFloat("gyro_z");
