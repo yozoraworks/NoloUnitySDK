@@ -14,6 +14,9 @@ import com.dreamworld.trlibrary.TRUsbHidUtil;
 import android.hardware.usb.UsbDevice;
 import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
+
+import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
 
 public class DreamGlassBridge implements CallbackInterface {
@@ -99,16 +102,20 @@ public class DreamGlassBridge implements CallbackInterface {
     @Override
     public void onSensorChanged(String s, int i) {
         if (i == 0) {
-         var data = new JSONObject(s);
-         data = (JSONObject)data.getJSONArray("imu_data");
-         data = (JSONObject)data.getJSONObject(0);
-            rx += data.getFloat("gyro_x");
-            ry += data.getFloat("gyro_y");
-            rz += data.getFloat("gyro_z");
-           
-            ax += data.getFloat("acc_x");
-            ay += data.getFloat("acc_y");
-            az += data.getFloat("acc_z");
+            JSONObject json = null;
+            try {
+                json = new JSONObject(s);
+                JSONArray arr = json.getJSONArray("imu_data");
+                JSONObject data = arr.getJSONObject(0);
+                rx += data.getDouble("gyro_x");
+                ry += data.getDouble("gyro_y");
+                rz += data.getDouble("gyro_z");
+
+                ax += data.getDouble("acc_x");
+                ay += data.getDouble("acc_y");
+                az += data.getDouble("acc_z");
+        } catch (JSONException e) {
+
         }
     }
 
