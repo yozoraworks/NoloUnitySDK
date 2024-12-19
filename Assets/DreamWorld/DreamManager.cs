@@ -54,7 +54,6 @@ public class DreamManager : MonoBehaviour
         try
         {
             string data = TheDreamBridge.Call<string>("GetIMU");
-            Debug.Log("IMU: " + data);
             if (string.IsNullOrEmpty(data))
             {
                 return false;
@@ -87,6 +86,7 @@ public class DreamManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
         }
 
+        inited = true;
         TheDreamBridge.Call("Set3DMode", be3D ? 2 : 1);
     }
 
