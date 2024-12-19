@@ -11,14 +11,17 @@ public class DreamManager : MonoBehaviour
     private AndroidJavaObject unityContext = null;
 
     public static Vector3 angle = Vector3.zero;
+    static AHRS.MahonyAHRS AHRS = new AHRS.MahonyAHRS(1f / 60f, 5f);
 
-    private void Update()
+    private void FixedUpdate()
     {
-        Vector3 acc, gyro;
-        if (GetIMU(out acc, out gyro))
+        Vector3 acc, gyro, mag;
+        if (GetIMU(out acc, out gyro, out mag))
         {
-            angle += gyro;
-            Debug.Log("Angle: " + angle);
+            AHRS.Update(Mathf.Deg2Rad * gyro.x, Mathf.Deg2Rad * gyro.y, Mathf.Deg2Rad * gyro.z, acc.x, acc.y, acc.z,
+                mag.x, mag.y, mag.z);
+            angle = new Quaternion(AHRS.Quaternion[1], AHRS.Quaternion[2], AHRS.Quaternion[3], AHRS.Quaternion[0])
+                .eulerAngles;
             transform.rotation = Quaternion.Euler(new Vector3(-angle.x, -angle.z, -angle.y));
         }
     }
@@ -45,10 +48,12 @@ public class DreamManager : MonoBehaviour
             TheDreamBridge.Call("Set3DMode", focus && be3D ? 2 : 1);
     }
 
-    public bool GetIMU(out Vector3 acc, out Vector3 gyro)
+    public bool GetIMU(out Vector3 acc, out Vector3 gyro, out Vector3 mag)
     {
         acc = Vector3.zero;
         gyro = Vector3.zero;
+        mag = Vector3.zero;
+
         if (!inited)
             return false;
         try
@@ -58,6 +63,7 @@ public class DreamManager : MonoBehaviour
 
             gyro = new Vector3(float.Parse(splits[0]), float.Parse(splits[1]), float.Parse(splits[2]));
             acc = new Vector3(float.Parse(splits[3]), float.Parse(splits[4]), float.Parse(splits[5]));
+            mag = new Vector3(float.Parse(splits[6]), float.Parse(splits[7]), float.Parse(splits[8]));
 
             return true;
         }

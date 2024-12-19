@@ -41,6 +41,7 @@ public class DreamGlassBridge implements CallbackInterface {
 
     public float rx, ry, rz;
     public float ax, ay, az;
+    public float mx, my, mz;
 
     private IntentFilter usbAttachIntentFilter = new IntentFilter();
 
@@ -84,7 +85,7 @@ public class DreamGlassBridge implements CallbackInterface {
     }
 
     public String GetIMU() {
-        var s = String.format("%f %f %f %f %f %f", rx, ry, rz, ax, ay, az);
+        var s = String.format("%f %f %f %f %f %f %f %f %f", ax, ay, az, rx, ry, rz, mx, my, mz);
         rx = ry = rz = 0;
         ax = ay = az = 0;
         return s;
@@ -106,13 +107,27 @@ public class DreamGlassBridge implements CallbackInterface {
                 JSONObject json = new JSONObject(s);
                 JSONArray arr = json.getJSONArray("imu_data");
                 JSONObject data = arr.getJSONObject(0);
-                rx += data.getDouble("gyro_x");
-                ry += data.getDouble("gyro_y");
-                rz += data.getDouble("gyro_z");
-
-                ax += data.getDouble("acc_x");
-                ay += data.getDouble("acc_y");
-                az += data.getDouble("acc_z");
+                boolean hasAcc = data.getDouble("accSensor") > 0;
+                boolean hasGyro = data.getDouble("gyrSensor") > 0;
+                boolean hasMag = data.getDouble("magSensor") > 0;
+                
+                if (hasAcc) {
+                    ax = data.getDouble("acc_x");
+                    ay = data.getDouble("acc_y");
+                    az = data.getDouble("acc_z");
+                }
+    
+                if (hasGyro) {
+                    rx = data.getDouble("gyro_x");
+                    ry = data.getDouble("gyro_y");
+                    rz = data.getDouble("gyro_z");
+                }
+                
+                if (hasMag) {
+                    mx = data.getDouble("mag_x");
+                    my = data.getDouble("mag_y");
+                    mz = data.getDouble("mag_z");
+                }
             } catch (JSONException e) {
                 e.printStackTrace();
             }
