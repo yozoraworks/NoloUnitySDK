@@ -77,8 +77,11 @@ public class ObjectManager : MonoBehaviour
         }
         else if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
         {
-            //rotate self
-            transform.Rotate(Input.GetTouch(0).deltaPosition * 0.5f);
+            //rotate by screen axis
+            var rotation = Input.GetTouch(0).deltaPosition * 0.3f;
+            transform.RotateAround(transform.position, Vector3.right, rotation.x);
+            transform.RotateAround(transform.position, Vector3.up, -rotation.y);
+
             rotated = true;
         }
 
@@ -93,7 +96,7 @@ public class ObjectManager : MonoBehaviour
             float touchDeltaMag = (touch0.position - touch1.position).magnitude;
             float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
             var oldScale = transform.localScale;
-            oldScale += Vector3.one * (deltaMagnitudeDiff * 0.01f);
+            oldScale -= Vector3.one * (deltaMagnitudeDiff * 0.01f);
             //limit
             if (oldScale.x < 0.2f)
                 oldScale = Vector3.one * 0.2f;
