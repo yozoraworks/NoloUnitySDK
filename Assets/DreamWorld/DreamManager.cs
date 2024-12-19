@@ -1,5 +1,7 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using UnityEngine;
+using Defective.JSON;
 
 public class DreamManager : MonoBehaviour
 {
@@ -7,6 +9,21 @@ public class DreamManager : MonoBehaviour
 
     private static AndroidJavaObject TheDreamBridge = null;
     private AndroidJavaObject unityContext = null;
+
+    Vector3 angle = Vector3.zero;
+
+    private void Update()
+    {
+        Vector3 acc, gyro;
+        if (GetIMU(out acc, out gyro))
+        {
+            angle += gyro;
+            Debug.Log("Angle: " + angle);
+            transform.rotation = Quaternion.Euler(angle);
+        }
+    }
+
+    private bool inited = false;
 
     private void OnApplicationFocus(bool focus)
     {
@@ -24,23 +41,41 @@ public class DreamManager : MonoBehaviour
             currentActivity.Dispose();
         }
 
-        TheDreamBridge.Call("Set3DMode", focus && be3D ? 2 : 1);
+        if (inited)
+            TheDreamBridge.Call("Set3DMode", focus && be3D ? 2 : 1);
     }
 
-    public bool GetIMU(out Vector3 pos, out Vector3 rot)
+    public bool GetIMU(out Vector3 acc, out Vector3 gyro)
     {
-        string data = TheDreamBridge.Call<string>("GetIMU");
-        if (string.IsNullOrEmpty(data))
+        acc = Vector3.zero;
+        gyro = Vector3.zero;
+        if (!inited)
+            return false;
+        try
         {
-            pos = Vector3.zero;
-            rot = Vector3.zero;
+            string data = TheDreamBridge.Call<string>("GetIMU");
+            Debug.Log("IMU: " + data);
+            if (string.IsNullOrEmpty(data))
+            {
+                return false;
+            }
+
+            var json = new JSONObject(data);
+            var imu_data = json.GetField("imu_data")[0];
+
+            acc = new Vector3(imu_data.GetField("acc_x").floatValue, imu_data.GetField("acc_y").floatValue,
+                imu_data.GetField("acc_z").floatValue);
+            gyro = new Vector3(imu_data.GetField("gyro_x").floatValue, imu_data.GetField("gyro_y").floatValue,
+                imu_data.GetField("gyro_z").floatValue);
+
+            Debug.Log("IMU: " + acc + " " + gyro);
+            return true;
+        }
+        catch (Exception e)
+        {
+            Debug.Log(e);
             return false;
         }
-        string[] values = data.Split(',');
-
-        pos = new Vector3(float.Parse(values[0]), float.Parse(values[1]), float.Parse(values[2]));
-        rot = new Vector3(float.Parse(values[3]), float.Parse(values[4]), float.Parse(values[5]));
-        return true;
     }
 
     private IEnumerator StartUSB()
@@ -51,6 +86,8 @@ public class DreamManager : MonoBehaviour
                 break;
             yield return new WaitForSeconds(0.5f);
         }
+
+        TheDreamBridge.Call("Set3DMode", be3D ? 2 : 1);
     }
 
     private void OnApplicationQuit()

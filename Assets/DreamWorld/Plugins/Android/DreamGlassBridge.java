@@ -3,10 +3,10 @@ package com.unity3d.player;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
+import android.content.IntentFilter;
+import android.content.BroadcastReceiver;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import android.util.Log;
 
 import com.dreamworld.trlibrary.CallbackInterface;
 import com.dreamworld.trlibrary.TRUsbHidUtil;
@@ -16,7 +16,7 @@ import android.hardware.usb.UsbDeviceConnection;
 import android.hardware.usb.UsbManager;
 
 public class DreamGlassBridge implements CallbackInterface {
-    private static final String ACTION_USB_PERMISSION = "com.unity3d.player.USB_PERMISSION";
+    private static final String ACTION_USB_PERMISSION = "com.dream.dgdemo.USB_PERMISSION";
 
     private static final int PRODUCT_VID = 0x483;
     private static final int PRODUCT_PID= 0x5740;
@@ -37,9 +37,20 @@ public class DreamGlassBridge implements CallbackInterface {
 
     public String IMUData = "";
 
+    private IntentFilter usbAttachIntentFilter = new IntentFilter();
+
     public boolean Init(Context ctx) {
         c = ctx;
         instance = this;
+
+        usbAttachIntentFilter.addAction("android.hardware.usb.action.USB_STATE");
+        usbAttachIntentFilter.addAction(UsbManager.ACTION_USB_ACCESSORY_ATTACHED);
+        usbAttachIntentFilter.addAction(UsbManager.ACTION_USB_ACCESSORY_DETACHED);
+        usbAttachIntentFilter.addAction(UsbManager.ACTION_USB_DEVICE_ATTACHED);
+        usbAttachIntentFilter.addAction(UsbManager.ACTION_USB_DEVICE_DETACHED);
+        usbAttachIntentFilter.addAction(ACTION_USB_PERMISSION);
+
+        ctx.registerReceiver(usbReceiver, usbAttachIntentFilter, Context.RECEIVER_NOT_EXPORTED);
 
         int ret = checkDevice();
         if (ret < 0) {
@@ -47,8 +58,10 @@ public class DreamGlassBridge implements CallbackInterface {
             return false;
         }
 
-        utils.initLibUsb(PRODUCT_VID, PRODUCT_VID, ret);
+        utils.initLibUsb(PRODUCT_VID, PRODUCT_PID, ret);
         utils.registerHmdCallbackData(this);
+        
+        Log.i("Unity", "Init success");
 
         return true;
     }
@@ -74,17 +87,15 @@ public class DreamGlassBridge implements CallbackInterface {
     }
 
     @Override
-    public void onCmdEvent(@Nullable String s, int i) {
+    public void onCmdEvent(String s, int i) {
         Log.i("Unity", "Cmd " + s + " " + i);
     }
 
     @Override
-    public void onSensorChanged(@NonNull String s, int i) {
+    public void onSensorChanged(String s, int i) {
         if (i == 0) {
             IMUData = s;
         }
-        
-        Log.i("Unity", "Sensor " + s + " " + i);
     }
 
     UsbManager mUsbManager = null;
@@ -99,18 +110,22 @@ public class DreamGlassBridge implements CallbackInterface {
                     //ask for permission
                     var mPermissionIntent = PendingIntent.getBroadcast(c, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
                     mUsbManager.requestPermission(device, mPermissionIntent);
+
+                    Log.i("Unity", "Request permission");
                     retval = -3;
 
                     break;
                 }
 
-                Log.i("Unity", "DEVICE: " + device.getManufacturerName() + " " + device.getProductName()  + " " + device.getDeviceName() + " " + device.getSerialNumber());
+                Log.i("Unity", "DEVICE: " + device.getVendorId() + " " + device.getProductId() + " " +
+                 device.getManufacturerName() + " " + device.getProductName()  + " " + device.getDeviceName() + " " + device.getSerialNumber());
 
                 //open device
                 UsbDeviceConnection connection = mUsbManager.openDevice(device);
-                if (connection != null) {
+                if (connection == null) {
                     var mPermissionIntent = PendingIntent.getBroadcast(c, 0, new Intent(ACTION_USB_PERMISSION), PendingIntent.FLAG_IMMUTABLE);
                     mUsbManager.requestPermission(device, mPermissionIntent);
+                    Log.i("Unity", "Request permission null connection");
 
                     retval = -2;
                 } else {
@@ -128,4 +143,24 @@ public class DreamGlassBridge implements CallbackInterface {
 
         return retval;
     }
+
+    private final BroadcastReceiver usbReceiver = new BroadcastReceiver() {
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if (ACTION_USB_PERMISSION.equals(action)) {
+                synchronized (this) {
+                    UsbDevice device = (UsbDevice)intent.getParcelableExtra(UsbManager.EXTRA_DEVICE);
+
+                    if (intent.getBooleanExtra(UsbManager.EXTRA_PERMISSION_GRANTED, false)) {
+                        if(device != null){
+                            // call method to set up device communication
+                        }
+                    }
+                    else {
+                        Log.d("Unity", "permission denied for device " + device);
+                    }
+                }
+            }
+        }
+    };
 }
