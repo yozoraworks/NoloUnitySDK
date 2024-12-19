@@ -8,6 +8,8 @@ public class ObjectManager : MonoBehaviour
     float enterTime = 0f;
     float escTime = -1f;
 
+    private bool rotated = false;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -21,14 +23,17 @@ public class ObjectManager : MonoBehaviour
         {
             transform.position += Vector3.forward * Time.deltaTime;
         }
+
         if (Input.GetKey(KeyCode.DownArrow))
         {
             transform.position += Vector3.back * Time.deltaTime;
         }
+
         if (Input.GetKey(KeyCode.LeftArrow))
         {
             transform.Rotate(Vector3.up * Time.deltaTime * 60f);
         }
+
         if (Input.GetKey(KeyCode.RightArrow))
         {
             transform.Rotate(-Vector3.up * Time.deltaTime * 60f);
@@ -63,10 +68,39 @@ public class ObjectManager : MonoBehaviour
         }
         else
             enterTime = 0f;
-        
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)
+
+        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended)
         {
-            Next();
+            if (!rotated)
+                Next();
+            rotated = false;
+        }
+        else if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            //rotate self
+            transform.Rotate(Input.GetTouch(0).deltaPosition * 0.5f);
+            rotated = true;
+        }
+
+        //zoom
+        if (Input.touchCount == 2)
+        {
+            Touch touch0 = Input.GetTouch(0);
+            Touch touch1 = Input.GetTouch(1);
+            Vector2 touch0PrevPos = touch0.position - touch0.deltaPosition;
+            Vector2 touch1PrevPos = touch1.position - touch1.deltaPosition;
+            float prevTouchDeltaMag = (touch0PrevPos - touch1PrevPos).magnitude;
+            float touchDeltaMag = (touch0.position - touch1.position).magnitude;
+            float deltaMagnitudeDiff = prevTouchDeltaMag - touchDeltaMag;
+            var oldScale = transform.localScale;
+            oldScale += Vector3.one * (deltaMagnitudeDiff * 0.01f);
+            //limit
+            if (oldScale.x < 0.2f)
+                oldScale = Vector3.one * 0.2f;
+            if (oldScale.x > 3f)
+                oldScale = Vector3.one * 3f;
+
+            transform.localScale = oldScale;
         }
     }
 
@@ -74,7 +108,8 @@ public class ObjectManager : MonoBehaviour
     {
         for (int i = 0; i < transform.childCount; i++)
         {
-            if (transform.GetChild(i).gameObject.activeSelf) {
+            if (transform.GetChild(i).gameObject.activeSelf)
+            {
                 transform.GetChild(i).gameObject.SetActive(false);
                 int a = i + 1;
                 if (a == transform.childCount)
