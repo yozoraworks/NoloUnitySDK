@@ -89,10 +89,6 @@ public class USBCamera : MonoBehaviour
 #if UNITY_ANDROID
         plugin.RefreshCameraStates(deviceID);
 #endif
-        if (!onlyRenderOnUI && Input.GetMouseButton(0))
-        {
-            screenRender.transform.Rotate(new Vector3(Input.GetAxis("Mouse Y") * 3.0f, -Input.GetAxis("Mouse X") * 3.0f, 0), Space.World);
-        }
     }
     public void InitScreen()
     {
