@@ -102,9 +102,8 @@ public class DreamGlassBridge implements CallbackInterface {
     @Override
     public void onSensorChanged(String s, int i) {
         if (i == 0) {
-            JSONObject json = null;
             try {
-                json = new JSONObject(s);
+                JSONObject json = new JSONObject(s);
                 JSONArray arr = json.getJSONArray("imu_data");
                 JSONObject data = arr.getJSONObject(0);
                 rx += data.getDouble("gyro_x");
@@ -114,8 +113,9 @@ public class DreamGlassBridge implements CallbackInterface {
                 ax += data.getDouble("acc_x");
                 ay += data.getDouble("acc_y");
                 az += data.getDouble("acc_z");
-        } catch (JSONException e) {
-
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
     }
 
