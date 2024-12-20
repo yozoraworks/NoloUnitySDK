@@ -972,8 +972,8 @@ MonoBehaviour:
   stopping: 0
   plugin: {fileID: 1069773875}
   deviceID: 0
-  width: 1280
-  height: 720
+  width: 640
+  height: 480
   FPS: 30
   screen: {fileID: 83461200}
   screenUI: {fileID: 319423934}
@@ -1007,7 +1007,7 @@ MeshRenderer:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 83461200}
-  m_Enabled: 0
+  m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
   m_DynamicOccludee: 1
