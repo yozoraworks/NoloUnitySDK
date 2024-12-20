@@ -11,6 +11,8 @@ using ZXing;
 using ZXing.Common;
 using ZXing.QrCode;
 using System.IO;
+using System.Threading.Tasks;
+using UnityEngine.Rendering;
 
 public class qrcode : MonoBehaviour
 {
@@ -38,6 +40,8 @@ public class qrcode : MonoBehaviour
     bool isInit = false;
     BarcodeReader barReader;
     string lastResult = null;
+    
+    static string result = null;
 
     void Start()
     {
@@ -64,6 +68,12 @@ public class qrcode : MonoBehaviour
 
     void Update()
     {
+        if (result != null)
+        {
+            onQRScanFinished?.Invoke(result);
+            result = null;
+        }
+        
         timer += Time.deltaTime;
         if (timer > 0.3f)
         {
@@ -73,19 +83,11 @@ public class qrcode : MonoBehaviour
             //check type
             if (tex is WebCamTexture)
             {
-                string data = DecodeByStaticPic((WebCamTexture)tex);
-                if (!string.IsNullOrEmpty(data))
-                {
-                    onQRScanFinished(data);
-                }
+                DecodeByStaticPic((WebCamTexture)tex);
             }
             else if (tex is Texture2D)
             {
-                string data = DecodeByStaticPic((Texture2D)tex);
-                if (!string.IsNullOrEmpty(data))
-                {
-                    onQRScanFinished(data);
-                }
+                DecodeByStaticPic((Texture2D)tex);
             }
         }
     }
@@ -107,20 +109,24 @@ public class qrcode : MonoBehaviour
         }
     }
 
-    public static string DecodeByStaticPic(WebCamTexture tex)
+    public static async Task DecodeByStaticPic(WebCamTexture tex)
     {
         BarcodeReader codeReader = new BarcodeReader();
         codeReader.AutoRotate = true;
         codeReader.TryInverted = true;
 
-        Result data = codeReader.Decode(tex.GetPixels32(), tex.width, tex.height);
-        if (data != null)
+        //prepare use task
+        var pixels = tex.GetPixels32();
+        var width = tex.width;
+        var height = tex.height;
+
+        Task.Run(() =>
         {
-            return data.Text;
-        }
-        else
-        {
-            return null;
-        }
+            Result data = codeReader.Decode(pixels, width, height);
+            if (data != null)
+            {
+                result = data.Text;
+            }
+        });
     }
 }
