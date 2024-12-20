@@ -6,6 +6,7 @@ public class qrcode : MonoBehaviour
 {
     public delegate void QRScanFinished(string str); //declare a delegate to deal with the QRcode decode complete
 
+    public RenderTexture qrcamTexture = null;
     public event QRScanFinished onQRScanFinished; //declare a event with the delegate to trigger the complete event
     public ObjectManager objManager = null;
     public Renderer renderer = null;
@@ -46,20 +47,22 @@ public class qrcode : MonoBehaviour
         }
 
         timer += Time.deltaTime;
-        if (timer > 1f && !processing)
+        if (timer > 0.1f && !processing)
         {
             timer = 0;
+            
+            if (processing)
+                return;
 
-            var tex = renderer.material.mainTexture;
-            //check type
-            if (tex is WebCamTexture)
-            {
-                DecodeByStaticPic((WebCamTexture)tex);
-            }
-            else if (tex is Texture2D)
-            {
-                DecodeByStaticPic((Texture2D)tex);
-            }
+            //prepare use task
+            //get pixels from qrcamTexture
+            var tex = new Texture2D(qrcamTexture.width, qrcamTexture.height);
+            RenderTexture.active = qrcamTexture;
+            tex.ReadPixels(new Rect(0, 0, qrcamTexture.width, qrcamTexture.height), 0, 0);
+            tex.Apply();
+            RenderTexture.active = null;
+            
+            DecodeByStaticPic(tex);
         }
     }
 
@@ -76,7 +79,7 @@ public class qrcode : MonoBehaviour
         var height = tex.height;
 
         processing = true;
-
+        
         await Task.Run(() =>
         {
             Result data = codeReader.Decode(pixels, width, height);
