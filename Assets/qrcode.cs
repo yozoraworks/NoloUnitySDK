@@ -109,8 +109,13 @@ public class qrcode : MonoBehaviour
         }
     }
 
+    private static bool processing = false;
+    
     public static async Task DecodeByStaticPic(WebCamTexture tex)
     {
+        if (processing)
+            return;
+        
         BarcodeReader codeReader = new BarcodeReader();
         codeReader.AutoRotate = true;
         codeReader.TryInverted = true;
@@ -120,6 +125,8 @@ public class qrcode : MonoBehaviour
         var width = tex.width;
         var height = tex.height;
 
+        processing = true;
+        
         Task.Run(() =>
         {
             Result data = codeReader.Decode(pixels, width, height);
@@ -127,6 +134,8 @@ public class qrcode : MonoBehaviour
             {
                 result = data.Text;
             }
+            
+            processing = false;
         });
     }
 }
