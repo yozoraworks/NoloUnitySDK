@@ -40,7 +40,7 @@ public class qrcode : MonoBehaviour
     bool isInit = false;
     BarcodeReader barReader;
     string lastResult = null;
-    
+
     static string result = null;
 
     void Start()
@@ -73,9 +73,9 @@ public class qrcode : MonoBehaviour
             onQRScanFinished?.Invoke(result);
             result = null;
         }
-        
+
         timer += Time.deltaTime;
-        if (timer > 0.3f)
+        if (timer > 1f && !processing)
         {
             timer = 0;
 
@@ -91,34 +91,17 @@ public class qrcode : MonoBehaviour
             }
         }
     }
-    
-    public static string DecodeByStaticPic(Texture2D tex)
-    {
-        BarcodeReader codeReader = new BarcodeReader();
-        codeReader.AutoRotate = true;
-        codeReader.TryInverted = true;
-
-        Result data = codeReader.Decode(tex.GetPixels32(), tex.width, tex.height);
-        if (data != null)
-        {
-            return data.Text;
-        }
-        else
-        {
-            return null;
-        }
-    }
 
     private static bool processing = false;
-    
-    public static async Task DecodeByStaticPic(WebCamTexture tex)
+
+    public static async Task DecodeByStaticPic(Texture2D tex)
     {
         if (processing)
             return;
-        
+
         BarcodeReader codeReader = new BarcodeReader();
-        codeReader.AutoRotate = true;
-        codeReader.TryInverted = true;
+        codeReader.AutoRotate = false;
+        codeReader.TryInverted = false;
 
         //prepare use task
         var pixels = tex.GetPixels32();
@@ -126,15 +109,43 @@ public class qrcode : MonoBehaviour
         var height = tex.height;
 
         processing = true;
-        
-        Task.Run(() =>
+
+        await Task.Run(() =>
         {
             Result data = codeReader.Decode(pixels, width, height);
             if (data != null)
             {
                 result = data.Text;
             }
-            
+
+            processing = false;
+        });
+    }
+
+    public static async Task DecodeByStaticPic(WebCamTexture tex)
+    {
+        if (processing)
+            return;
+
+        BarcodeReader codeReader = new BarcodeReader();
+        codeReader.AutoRotate = false;
+        codeReader.TryInverted = false;
+
+        //prepare use task
+        var pixels = tex.GetPixels32();
+        var width = tex.width;
+        var height = tex.height;
+
+        processing = true;
+
+        await Task.Run(() =>
+        {
+            Result data = codeReader.Decode(pixels, width, height);
+            if (data != null)
+            {
+                result = data.Text;
+            }
+
             processing = false;
         });
     }
