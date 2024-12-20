@@ -69,12 +69,41 @@ public class qrcode : MonoBehaviour
         {
             timer = 0;
 
-            var tex = (WebCamTexture)renderer.material.mainTexture;
-            string data = DecodeByStaticPic(tex);
-            if (!string.IsNullOrEmpty(data))
+            var tex = renderer.material.mainTexture;
+            //check type
+            if (tex is WebCamTexture)
             {
-                onQRScanFinished(data);
+                string data = DecodeByStaticPic((WebCamTexture)tex);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    onQRScanFinished(data);
+                }
             }
+            else if (tex is Texture2D)
+            {
+                string data = DecodeByStaticPic((Texture2D)tex);
+                if (!string.IsNullOrEmpty(data))
+                {
+                    onQRScanFinished(data);
+                }
+            }
+        }
+    }
+    
+    public static string DecodeByStaticPic(Texture2D tex)
+    {
+        BarcodeReader codeReader = new BarcodeReader();
+        codeReader.AutoRotate = true;
+        codeReader.TryInverted = true;
+
+        Result data = codeReader.Decode(tex.GetPixels32(), tex.width, tex.height);
+        if (data != null)
+        {
+            return data.Text;
+        }
+        else
+        {
+            return null;
         }
     }
 
