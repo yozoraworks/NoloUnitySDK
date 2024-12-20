@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_PixelRect:
     serializedVersion: 2
-    x: 251
-    y: 370
+    x: 1908
+    y: 450
     width: 725
-    height: 578
+    height: 630
   m_ShowMode: 0
   m_Title: Build Profiles
   m_RootView: {fileID: 4}
@@ -43,7 +43,7 @@ MonoBehaviour:
     width: 3424
     height: 1333
   m_ShowMode: 4
-  m_Title: Hierarchy
+  m_Title: Game
   m_RootView: {fileID: 5}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -66,7 +66,7 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 725
-    height: 578
+    height: 630
   m_MinSize: {x: 725, y: 426}
   m_MaxSize: {x: 4000, y: 4026}
   m_ActualView: {fileID: 15}
@@ -93,11 +93,11 @@ MonoBehaviour:
     x: 0
     y: 0
     width: 725
-    height: 578
+    height: 630
   m_MinSize: {x: 725, y: 426}
   m_MaxSize: {x: 4000, y: 4026}
   vertical: 0
-  controlID: 5313
+  controlID: 16
   draggingID: 0
 --- !u!114 &5
 MonoBehaviour:
@@ -196,7 +196,7 @@ MonoBehaviour:
   m_MinSize: {x: 400, y: 100}
   m_MaxSize: {x: 32384, y: 16192}
   vertical: 0
-  controlID: 85
+  controlID: 53
   draggingID: 0
 --- !u!114 &9
 MonoBehaviour:
@@ -380,7 +380,7 @@ MonoBehaviour:
     x: 0
     y: 26
     width: 725
-    height: 552
+    height: 604
   m_SerializedDataModeController:
     m_DataMode: 0
     m_PreferredDataMode: 0
@@ -1083,9 +1083,9 @@ MonoBehaviour:
   m_AudioPlay: 0
   m_DebugDrawModesUseInteractiveLightBakingData: 0
   m_Position:
-    m_Target: {x: -0.002482832, y: 0.55092096, z: 1.2572846}
+    m_Target: {x: -0.12037824, y: -0.17371579, z: -0.014492444}
     speed: 2
-    m_Value: {x: -0.002482832, y: 0.55092096, z: 1.2572846}
+    m_Value: {x: -0.12037824, y: -0.17371579, z: -0.014492444}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -1131,13 +1131,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0.5
   m_Rotation:
-    m_Target: {x: 0.10948585, y: -0.88962054, z: 0.29166424, w: 0.33394837}
+    m_Target: {x: 0.13780883, y: -0.029402116, z: 0.0040927203, w: 0.9900159}
     speed: 2
-    m_Value: {x: -0.10948577, y: 0.8896199, z: -0.29166403, w: -0.33394814}
+    m_Value: {x: -0.13780883, y: 0.029402114, z: -0.00409272, w: -0.9900159}
   m_Size:
-    m_Target: 5.5939574
+    m_Target: 0.17636113
     speed: 2
-    m_Value: 5.5939574
+    m_Value: 0.17636113
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1311,7 +1311,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: d099ffff269affff849bffff58a1ffffaea1ffff10a3ffffcaa5ffff0ea8ffff64a8ffffc6a9ffff0ec1ffff64c1ffffdac2ffffb4d3ffff0ad4ffff80d5ffff0ae5ffff60e5ffffd2e6ffff92e7ffff52f4ffffa8f4ffff1af6ffff0efbffff48e70000fa420100ac440100
+      m_ExpandedIDs: 02fbffffbc680000
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -1384,7 +1384,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/ZXing
+    - Assets
     m_Globs: []
     m_ProductIds: 
     m_AnyWithAssetOrigin: 0
@@ -1394,16 +1394,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 16
   m_LastFolders:
-  - Assets/ZXing
+  - Assets
   m_LastFoldersGridSize: 16
-  m_LastProjectPath: /Users/matt/Documents/GitHub/NoloUnitySDK
+  m_LastProjectPath: D:\GitHub\NoloUnitySDK
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 0}
-    m_SelectedIDs: 5ad50100
-    m_LastClickedID: 120154
-    m_ExpandedIDs: 
+    m_SelectedIDs: f8690000
+    m_LastClickedID: 27128
+    m_ExpandedIDs: 00000000f8690000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1432,7 +1432,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 
+    m_ExpandedIDs: 00000000f8690000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1460,7 +1460,7 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
+    m_HadKeyboardFocusLastEvent: 0
     m_ExpandedInstanceIDs: 900600004e06000000000000da0200008e060000ce020100
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -1533,7 +1533,7 @@ MonoBehaviour:
     m_CachedPref: -160
     m_ControlHash: -371814159
     m_PrefName: Preview_InspectorPreview
-  m_LastInspectedObjectInstanceID: 156178
+  m_LastInspectedObjectInstanceID: -1
   m_LastVerticalScrollValue: 0
   m_GlobalObjectId: 
   m_InspectorMode: 0
